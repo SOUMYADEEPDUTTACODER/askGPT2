@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AskGPT</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+</head>
+<body class="chat-page">
+    <div class="sidebar">
+        <div class="new-chat">
+            <button id="newChatBtn">+ New Chat</button>
+        </div>
+        <div class="chat-history" id="chatHistory">
+            <!-- Chat history will be populated here -->
+        </div>
+        <div class="user-info">
+            <div class="user-details">
+                <span class="username">{{ current_user.username }}</span>
+                <button id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="chat-container" id="chatContainer">
+            <div class="welcome-screen" id="welcomeScreen">
+                <h1>AskGPT</h1>
+                <p>Start a conversation with the AI assistant</p>
+            </div>
+            <div class="messages" id="messages">
+                <!-- Messages will be populated here -->
+            </div>
+        </div>
+        
+        <div class="input-container">
+            <div class="input-box">
+                <textarea 
+                    id="messageInput" 
+                    placeholder="Type your message here..." 
+                    rows="1"
+                    oninput="autoResize(this)"
+                ></textarea>
+                <button id="sendButton" disabled>
+                    <span class="send-icon">➤</span>
+                </button>
+            </div>
+            <div class="typing-indicator" id="typingIndicator">
+                <span>AI is typing...</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html> 
