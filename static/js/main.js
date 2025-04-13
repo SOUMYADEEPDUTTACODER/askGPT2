@@ -7,9 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const typingIndicator = document.getElementById('typingIndicator');
     const newChatBtn = document.getElementById('newChatBtn');
     const logoutBtn = document.getElementById('logoutBtn');
+    const chatHistory = document.getElementById('chatHistory');
     
     let currentChatId = null;
     let isTyping = false;
+
+    // Load chat history on page load
+    loadChatHistory();
 
     // Auto-resize textarea
     const autoResize = (textarea) => {
@@ -41,6 +45,62 @@ document.addEventListener('DOMContentLoaded', () => {
         messageElement.scrollIntoView({ behavior: 'smooth' });
         hljs.highlightAll();
     };
+
+    // Load chat history
+    async function loadChatHistory() {
+        try {
+            const response = await fetch('/api/chats');
+            const chats = await response.json();
+            
+            chatHistory.innerHTML = '';
+            chats.forEach(chat => {
+                const chatElement = createChatHistoryElement(chat);
+                chatHistory.appendChild(chatElement);
+            });
+        } catch (error) {
+            console.error('Error loading chat history:', error);
+        }
+    }
+
+    // Create chat history element
+    function createChatHistoryElement(chat) {
+        const chatElement = document.createElement('div');
+        chatElement.className = 'chat-history-item';
+        chatElement.dataset.chatId = chat.id;
+        
+        // Get the first message as preview
+        const preview = chat.messages[0]?.content || 'New Chat';
+        const truncatedPreview = preview.length > 30 ? preview.substring(0, 30) + '...' : preview;
+        
+        chatElement.innerHTML = `
+            <div class="chat-preview">
+                <i class="fas fa-comment"></i>
+                <span>${truncatedPreview}</span>
+            </div>
+            <div class="chat-date">${new Date(chat.created_at).toLocaleDateString()}</div>
+        `;
+
+        chatElement.addEventListener('click', () => loadChat(chat.id));
+        return chatElement;
+    }
+
+    // Load specific chat
+    async function loadChat(chatId) {
+        try {
+            const response = await fetch(`/api/chats/${chatId}`);
+            const chat = await response.json();
+            
+            currentChatId = chatId;
+            messagesContainer.innerHTML = '';
+            welcomeScreen.style.display = 'none';
+            
+            chat.messages.forEach(msg => {
+                addMessage(msg.content, msg.is_user);
+            });
+        } catch (error) {
+            console.error('Error loading chat:', error);
+        }
+    }
 
     // Send message
     const sendMessage = () => {
@@ -98,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         typingIndicator.style.display = 'none';
         currentChatId = data.chat_id;
         addMessage(data.message, false);
+        loadChatHistory(); // Refresh chat history after new message
     });
 
     socket.on('error', (data) => {

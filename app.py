@@ -7,6 +7,7 @@ import uuid
 import requests
 import json
 from datetime import datetime
+from bson import ObjectId
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -68,6 +69,36 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+# API Routes for Chat History
+@app.route('/api/chats')
+@login_required
+def get_chats():
+    chats = []
+    chat_ids = Message.get_user_chats(current_user.id)
+    
+    for chat_id in chat_ids:
+        messages = Message.get_by_chat_id(chat_id)
+        if messages:
+            chat = {
+                'id': chat_id,
+                'created_at': messages[0]['created_at'],
+                'messages': messages
+            }
+            chats.append(chat)
+    
+    # Sort chats by date (newest first)
+    chats.sort(key=lambda x: x['created_at'], reverse=True)
+    return jsonify(chats)
+
+@app.route('/api/chats/<chat_id>')
+@login_required
+def get_chat(chat_id):
+    messages = Message.get_by_chat_id(chat_id)
+    return jsonify({
+        'id': chat_id,
+        'messages': messages
+    })
+
 # SocketIO events
 @socketio.on('send_message')
 @login_required
@@ -99,7 +130,7 @@ def get_ai_response(message):
     
     data = {
         'messages': [{'role': 'user', 'content': message}],
-        'model': 'llama3-8b-8192'
+        'model': 'mixtral-8x7b-32768'
     }
     
     response = requests.post(

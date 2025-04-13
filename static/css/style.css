@@ -167,6 +167,53 @@ body {
     flex: 1;
     overflow-y: auto;
     margin-bottom: 1rem;
+    padding: 0.5rem;
+}
+
+.chat-history-item {
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    background: var(--card-bg);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.chat-history-item:hover {
+    background: var(--hover-color);
+    transform: translateX(5px);
+}
+
+.chat-history-item.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.chat-preview {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.chat-preview i {
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.chat-preview span {
+    color: var(--text-color);
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-date {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    text-align: right;
 }
 
 .user-info {
