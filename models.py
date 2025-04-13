@@ -6,15 +6,16 @@ from flask_login import UserMixin
 
 # MongoDB connection
 client = MongoClient('mongodb://localhost:27017/')
-db = client['askgpt']
+db = client['askgpt2']
 
 class User(UserMixin):
     def __init__(self, user_data):
         self.id = str(user_data['_id'])
-        self.username = user_data['username']
-        self.email = user_data['email']
-        self.password_hash = user_data['password_hash']
-        self.created_at = user_data['created_at']
+        self.username = user_data.get('username', '')
+        self.email = user_data.get('email', '')
+        self.password_hash = user_data.get('password_hash', '')  # Use .get to avoid KeyError
+        self.created_at = user_data.get('created_at', datetime.utcnow())
+
 
     @staticmethod
     def get_by_id(user_id):

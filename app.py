@@ -99,7 +99,7 @@ def get_ai_response(message):
     
     data = {
         'messages': [{'role': 'user', 'content': message}],
-        'model': 'mixtral-8x7b-32768'
+        'model': 'llama3-8b-8192'
     }
     
     response = requests.post(
