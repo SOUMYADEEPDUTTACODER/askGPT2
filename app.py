@@ -120,7 +120,7 @@ def handle_message(data):
             'chat_id': chat_id
         })
     except Exception as e:
-        emit('error', {'message': 'Error getting AI response'})
+        emit('error', {'message': 'Error getting AI response'})#check github
 
 def get_ai_response(message):
     headers = {
